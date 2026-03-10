@@ -1,0 +1,1 @@
+- Projeto focado em scrapper de preços e automação de mensagens para o telegram.

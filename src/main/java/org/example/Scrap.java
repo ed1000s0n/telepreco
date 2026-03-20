@@ -24,7 +24,7 @@ public class Scrap {
 
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
-        Document html = response.body();
+        String html = response.body();
         System.out.println(html);
     }
 }

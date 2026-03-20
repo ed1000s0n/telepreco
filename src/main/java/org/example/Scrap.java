@@ -1,27 +1,30 @@
 package org.example;
 
+import javax.swing.text.Document;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+
+
+
 public class Scrap {
-    public static void scrap ()  throws IOException, InterruptedException {
+    public Scrap(String link) {
+    }
 
-        String url = "https://www.netshoes.com.br/p/kit-1-tenis-olympikus-orbita-e-1-mochila-olympikus-braze-SE7-07VW-006";
-
+    public static void extract (String product)  throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(URI.create(product))
                 .GET()
                 .build();
 
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
-        String html = response.body();
-
+        Document html = response.body();
         System.out.println(html);
     }
 }

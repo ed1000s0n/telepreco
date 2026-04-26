@@ -10,7 +10,6 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        // Configuração do Telegram (pode ser carregada de arquivo de configuração)
         String botToken = System.getProperty("telegram.bot.token", "");
         String chatId = System.getProperty("telegram.chat.id", "");
 
@@ -18,14 +17,7 @@ public class Main {
         ProductController productController = new ProductController(telegramService);
 
         System.out.println("🛒 === SCRAPER DE PRODUTOS ===");
-        System.out.println();
 
-        if (botToken.isBlank()) {
-            System.out.println("⚠️  Telegram não configurado. Configure as variáveis:");
-            System.out.println("   -Dtelegram.bot.token=SEU_BOT_TOKEN");
-            System.out.println("   -Dtelegram.chat.id=SEU_CHAT_ID");
-            System.out.println();
-        }
 
         while (true) {
             System.out.println("Escolha uma opção:");

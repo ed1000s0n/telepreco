@@ -1,6 +1,8 @@
 package org.example;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.example.model.Product;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,20 +43,16 @@ public class Scrap {
         Product product = new Product();
         product.setUrl(url);
 
-        // Extrair nome do produto
         product.setName(extractProductName(doc));
 
-        // Extrair preço do produto
         product.setPrice(extractProductPrice(doc));
 
-        // Extrair ID do produto
         product.setId(extractProductId(doc, url));
 
         return product;
     }
 
     private static String extractProductName(Document doc) {
-        // Tentativas comuns para encontrar o nome do produto
         String[] nameSelectors = {
             "h1[data-testid='product-title']",
             "h1.product-title",
@@ -74,7 +72,6 @@ public class Scrap {
             }
         }
 
-        // Se não encontrar, tenta extrair do título da página
         String title = doc.title();
         if (title != null && !title.trim().isEmpty()) {
             return title.split("\\|")[0].trim();
@@ -84,43 +81,24 @@ public class Scrap {
     }
 
     private static String extractProductPrice(Document doc) {
-        // Tentativas comuns para encontrar o preço
-        String[] priceSelectors = {
-            "[data-testid='price-value']",
-            ".price-value",
-            ".price",
-            ".product-price",
-            ".current-price",
-            ".price-current",
-            ".sale-price",
-            "[class*='price']",
-            "[data-price]"
-        };
+        Element scriptElement = doc.selectFirst("script[name=\"structured-pdp\"]");
 
-        for (String selector : priceSelectors) {
-            Element element = doc.selectFirst(selector);
-            if (element != null && !element.text().trim().isEmpty()) {
-                String price = element.text().trim();
-                // Limpar e formatar o preço
-                price = price.replaceAll("[^0-9,.]", "");
-                if (!price.isEmpty()) {
-                    return "R$ " + price;
-                }
-            }
+        if (scriptElement == null) {
+            return "Elemento não encontrado";
         }
 
-        // Busca por padrões de preço no texto
-        Pattern pricePattern = Pattern.compile("R\\$\\s*([0-9]+[.,][0-9]+)");
-        Matcher matcher = pricePattern.matcher(doc.text());
+        Pattern pattern = Pattern.compile("\"lowPrice\"\\s*:\\s*\"(.*?)\"");
+        Matcher matcher = pattern.matcher(scriptElement.data());
         if (matcher.find()) {
-            return "R$ " + matcher.group(1);
+            String preco = matcher.group(1);
+            preco = preco.replace(".", ",");
+
+            return "R$ " + preco;
         }
 
         return "Preço não encontrado";
     }
-
     private static String extractProductId(Document doc, String url) {
-        // Tentar extrair ID de atributos comuns
         String[] idSelectors = {
             "[data-product-id]",
             "[data-id]",
@@ -142,14 +120,12 @@ public class Scrap {
             }
         }
 
-        // Tentar extrair ID da URL
         Pattern urlIdPattern = Pattern.compile("(?:id=|/p/|/product/)([0-9]+)");
         Matcher matcher = urlIdPattern.matcher(url);
         if (matcher.find()) {
             return matcher.group(1);
         }
 
-        // Gerar ID baseado na URL se não encontrar
         return String.valueOf(Math.abs(url.hashCode()));
     }
 }

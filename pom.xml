@@ -29,7 +29,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.16.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
         <!-- SLF4J para logs -->
         <dependency>
             <groupId>org.slf4j</groupId>

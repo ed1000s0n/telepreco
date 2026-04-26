@@ -20,10 +20,8 @@ public class ProductController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Extrair informações do produto
             Product product = Scrap.extractProductInfo(url);
 
-            // Enviar para o Telegram
             telegramService.sendProductMessage(product);
 
             response.put("success", true);
